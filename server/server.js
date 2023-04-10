@@ -1,8 +1,11 @@
+import {ApolloServer} from 'apollo-server-express'
+import {readFile} from 'fs/promises'
 import cors from 'cors';
 import express from 'express';
 import { expressjwt } from 'express-jwt';
 import jwt from 'jsonwebtoken';
 import { User } from './db.js';
+import {resolvers} from './resolvers.js';
 
 const PORT = 9000;
 const JWT_SECRET = Buffer.from('Zn8Q5tyZ/G1MHltc4F/gTkVJMlrbKiZt', 'base64');
@@ -25,6 +28,14 @@ app.post('/login', async (req, res) => {
   }
 });
 
+const typeDefs = await readFile('./schema.graphql','utf8');
+
+const apolloServer = new ApolloServer({ typeDefs, resolvers })
+// Start the apollo server
+await apolloServer.start() 
+//plugin apolloserver into the node
+apolloServer.applyMiddleware({app,path:'/graphql'})
 app.listen({ port: PORT }, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Graphql running on ENDPOINT http://localhost:${PORT}/graphql`)
 });
