@@ -2,7 +2,16 @@
 type Query {
   job(id: ID!): Job
   jobs: [Job!]
+  company(id: ID!): Company
 }
+
+# Actions that writes or mutates data
+type Mutation {
+  createJob(input: CreateJobInput!): Job
+  deleteJob(id: ID!): Job
+  updateJob(input: UpdateJobInput!): Job
+}
+
 # Thw ! means it is mandatory
 type Job {
   id: ID!
@@ -14,4 +23,18 @@ type Job {
 type Company {
   id: ID!
   name: String
+  description: String
+  jobs: [Job!]
+}
+
+input CreateJobInput {
+  title: String!
+  companyId: ID!
+  description: String
+}
+
+input UpdateJobInput {
+  title: String
+  company: ID
+  description: String
 }
