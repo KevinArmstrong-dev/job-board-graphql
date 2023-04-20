@@ -30,7 +30,15 @@ app.post('/login', async (req, res) => {
 
 const typeDefs = await readFile('./schema.graphql','utf8');
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers })
+const context = async ({req}) =>{
+  if (req.auth){
+    const user = await User.findById(req.auth.sub);
+    return {user}
+  }
+  return {}
+
+}
+const apolloServer = new ApolloServer({ typeDefs, resolvers, context })
 // Start the apollo server
 await apolloServer.start() 
 //plugin apolloserver into the node
